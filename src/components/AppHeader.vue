@@ -1,13 +1,18 @@
 <template>
-  <nav>
-    <ul id="menu">
-      <li><router-link to="/">Home</router-link></li>
-      <li><router-link to="/clock">Clock</router-link></li>
-      <li><router-link to="/reports">Reports</router-link></li>
-      <li v-if="loggedIn" class="right" v-on:click="logout"><a>Logout</a></li>
-      <li v-else class="right"><router-link to="/login">Login</router-link></li>
-    </ul>	
-  </nav>
+  <div class="app-header">
+    <nav>
+      <ul id="menu">
+        <li><router-link to="/">Home</router-link></li>
+        <li><router-link to="/clock">Clock</router-link></li>
+        <li><router-link to="/reports">Reports</router-link></li>
+        <li v-if="loggedIn" class="right" v-on:click="logout"><a>Logout</a></li>
+        <li v-else class="right"><router-link to="/login">Login</router-link></li>
+      </ul>	
+    </nav>
+    <div class="footer">
+      <a href="https://github.com/Spencer-Smith/timeclock"><i class="fa fa-github"></i></a>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -84,5 +89,21 @@
    background: #5cdb95;
  }
  nav li .router-link-exact-active.right {
+ }
+ .footer {
+   position: absolute;
+   bottom: 10px;
+   left: 10px;
+ }
+ .footer i {
+   font-size: 3em;
+   opacity: 0.4;
+   cursor: pointer;
+ }
+ .footer i:hover {
+   opacity: 1;
+ }
+ .footer a, .footer a:visited {
+   color: #05386b;
  }
 </style>

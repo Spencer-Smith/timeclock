@@ -13,7 +13,7 @@
       <div v-for='punch in filteredPunches' class="punch">
         <p>{{ punch.IN }}</p>
         <p>{{ punch.OUT }}</p>
-        <p>{{ ((new Date(punch.OUT)-newDate(punch.IN))/1000/60) }}</p>
+        <p>{{ ((new Date(punch.OUT) - new Date(punch.IN))/1000/60) }}</p>
       </div>
     </div>
     <div v-else>
@@ -38,33 +38,26 @@
      filteredPunches: function() {
        if (this.window === '')
          return [];
-       console.log("Filtering...");
        let fp = [];
        for (let i=0; i < this.punches.length; i++) {
          let punch = this.punches[i];
          let outPunch = new Date(punch.OUT);
          let now = new Date();
          let millis = now - outPunch;
-         console.log(millis);
          let timePassed = Math.floor(millis/60000);
-         console.log("Minutes passed: " + timePassed);
          if(this.window === 'day') {
-           console.log("...by day");
            if (timePassed < 1440)
              fp.push(punch);
          }
          else if(this.window === 'week') {
-           console.log("...by week");
            if (timePassed/60/24 < 7)
              fp.push(punch);
          }
          else if(this.window === 'month') {
-           console.log("...by month");
            if (timePassed/60/24 < 30)
              fp.push(punch);
          }
          else if(this.window === 'year') {
-           console.log("...by year");
            if (timePassed/60/24 < 365)
              fp.push(punch);
          }
@@ -95,7 +88,6 @@
        this.$store.dispatch('addPunch', new Date());
      },
      setWindow: function(setting) {
-       console.log(setting);
        this.window = setting;
      },
    },
