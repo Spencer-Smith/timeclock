@@ -24,7 +24,7 @@
 
 <script>
  export default {
-   name: 'TimeClock',
+   name: 'Reports',
    data () {
      return {
        punches: [],
@@ -79,14 +79,11 @@
      }
    },
    created: function() {
-     let user = this.$store.getters.user;
-     if (user != null)
-       this.punches = user.punches;
+     let punches = this.$store.getters.punches;
+     if (punches != null)
+       this.punches = punches;
    },
    methods: {
-     punch: function() {
-       this.$store.dispatch('addPunch', new Date());
-     },
      setWindow: function(setting) {
        this.window = setting;
      },
