@@ -19,9 +19,10 @@ const saltRounds = 10;
 
 
 //-- Login and Register --//
+// Register new user
 app.post('/api/user', (req, res) => {
   if (!req.body.username || !req.body.password)
-    return res.status(400).send();
+    return res.status(400).send("Username and password required");
   knex('users').where('username', req.body.username).first().then(user => {
     if (user !== undefined) {
       res.status(403).send("Username already exists");
@@ -39,14 +40,15 @@ app.post('/api/user', (req, res) => {
   }).catch(error => {
     if (error.message !== 'abort') {
       console.log(error);
-      res.status(500).json({ error });
+      res.status(500).send({ error });
     }
   });   
 });
 
+// Login existing user
 app.post('/api/user/login', (req, res) => {
   if (!req.body.username || !req.body.password)
-    return res.status(400).send();
+    return res.status(400).send("Username and password required");
   knex('users').where('username', req.body.username).first().then(user => {
     if (user === undefined) {
       res.status(403).send("Invalid credentials");
@@ -61,13 +63,14 @@ app.post('/api/user/login', (req, res) => {
   }).catch(error => {
     if (error.message !== 'abort') {
       console.log(error);
-      res.status(500).json({ error });
+      res.status(500).send({ error });
     }
   });
 });
 
 
 //-- Punching --//
+// Get all punches for user
 app.get('/api/user/:id/punch', (req, res) => {
   let id = parseInt(req.params.id);
   knex('users').join('punches', 'users.id', 'punches.user_id')
@@ -76,10 +79,11 @@ app.get('/api/user/:id/punch', (req, res) => {
   .select('punch_in', 'punch_out').then(punches => {
     res.status(200).json({ punches:punches });
   }).catch(error => {
-    res.status(500).json({ error });
+    res.status(500).send({ error });
   });
 });
 
+// Add punch 
 app.post('/api/punch', (req, res) => {
   let id = req.body.id;
   let punch = req.body.punch;
@@ -88,12 +92,10 @@ app.post('/api/punch', (req, res) => {
      punch_out:punch.punch_out});
   }).then(ids => {
     return knex('punches').where('id',ids[0]).first()
-    .orderBy('punch_in')
-    .select('punch_in', 'punch_out');
-  }).then(punches => {
-    res.status(200).json({ punches:punches });
+  }).then(punch => {
+    res.status(200).json({ punch:punch });
   }).catch(error => {
-    res.status(500).json({ error });
+    res.status(500).send({ error });
   });
 });
 

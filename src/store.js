@@ -1,39 +1,50 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import axios from 'axios';
-
+import axios from 'axios'; 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    user: null,
+    user: {},
+    loggedIn: false,
     openPunch: null,
-    punches: null, 
+    punches: [], 
   },
   getters: {
     user: state => state.user,
+    isLoggedIn: state => state.loggedIn,
     openPunch: state => state.openPunch,
+    isPunchedIn: state => () => {
+      if (openPunch == null)
+        return true;
+      return false;
+    },
     punches: state => state.punches,
   },
   mutations: {
     setUser (state, user) {
+      console.log('setUser', user);
       state.user = user;
     },
-    setPunch(state, punch) {
+    setLoggedIn (state, is) {
+      state.loggedIn = is;
+    },
+    setPunch (state, punch) {
       state.openPunch = punch;
     },
-    setPunches(state, punches) {
-      console.log("set punches: ", punches);
+    setPunches (state, punches) {
+      console.log('setPunches', punches);
       state.punches = punches;
     },
   },
   actions: {
-    //--Login--//
+  //--Login--//
     register(context, [username, password]) {
       return new Promise((resolve, reject) => {
         axios.post("/api/user", { username:username, password:password })
         .then(response => {
           context.commit('setUser', response.data.user);
+          context.commit('setLoggedIn', true);
           context.dispatch('getPunches');
           resolve({success: true});
         }).catch(err => {
@@ -46,6 +57,7 @@ export default new Vuex.Store({
         axios.post("/api/user/login", { username:username, password:password })
         .then(response => {
           context.commit('setUser', response.data.user);
+          context.commit('setLoggedIn', true);
           context.dispatch('getPunches');
           resolve({success: true});
         }).catch(err => {
@@ -55,9 +67,10 @@ export default new Vuex.Store({
       });
     },
     logout(context) {
-      context.commit('setUser', null);
+      context.commit('setUser', {});
+      context.commit('setLoggedIn', false);
     },
-    //--Punches--//
+  //--Punches--//
     addPunch(context, time) {
       let punch = this.getters.openPunch;
       // This is a punch out
@@ -66,7 +79,7 @@ export default new Vuex.Store({
         axios.post("/api/punch/", { id:this.getters.user.id, punch:punch })
         .then(response => {
           context.commit('setPunch', null);
-          context.dispatch('setPunches', response.data.punches);
+          context.dispatch('getPunches');
         }).catch(err => {
           console.log(err);
         });
@@ -79,9 +92,7 @@ export default new Vuex.Store({
     },
     getPunches(context) {
       let id = context.getters.user.id;
-      axios.get('/api/user/' + id + "/punch").then(response => {
-        console.log("response: ", response);
-        console.log("punches: ", response.data.punches);
+      axios.get("/api/user/" + id + "/punch").then(response => {
         context.commit('setPunches', response.data.punches);
       }).catch(err => {
         console.log(err);

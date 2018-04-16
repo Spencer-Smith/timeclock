@@ -20,7 +20,7 @@
    name: 'AppHeader',
    computed: {
      loggedIn: function() {
-       return this.$store.getters.user != null;
+       return this.$store.getters.isLoggedIn;
      },
    },
    methods: {

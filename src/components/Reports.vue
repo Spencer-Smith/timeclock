@@ -33,7 +33,7 @@
    },
    computed: {
      loggedIn: function() {
-       return this.$store.getters.user != null;
+       return this.$store.getters.isLoggedIn;
      },
      filteredPunches: function() {
        if (this.window === '')
