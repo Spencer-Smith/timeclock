@@ -92,7 +92,7 @@ export default new Vuex.Store({
     },
     getPunches(context) {
       let id = context.getters.user.id;
-      axios.get("/api/user/" + id + "/punch").then(response => {
+      return axios.get("/api/user/" + id + "/punch").then(response => {
         context.commit('setPunches', response.data.punches);
       }).catch(err => {
         console.log(err);

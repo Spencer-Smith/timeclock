@@ -75,7 +75,6 @@ app.get('/api/user/:id/punch', (req, res) => {
   let id = parseInt(req.params.id);
   knex('users').join('punches', 'users.id', 'punches.user_id')
   .where('users.id', id)
-  .orderBy('punch_in')
   .select('punch_in', 'punch_out').then(punches => {
     res.status(200).json({ punches:punches });
   }).catch(error => {

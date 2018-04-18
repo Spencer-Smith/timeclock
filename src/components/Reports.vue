@@ -9,11 +9,16 @@
       </div>
       <div v-if='filteredPunches.length > 0'>
         <p>You've worked for {{timeIn}} minutes in the past {{window}}.</p>
+        <div class="punch">
+          <p>Punch in</p>
+          <p>Punch out</p>
+          <p>Time worked</p>
+        </div>
       </div>
       <div v-for='punch in filteredPunches' class="punch">
-        <p>{{ punch.IN }}</p>
-        <p>{{ punch.OUT }}</p>
-        <p>{{ ((new Date(punch.OUT) - new Date(punch.IN))/1000/60) }}</p>
+        <p>{{ prettyDate(punch.punch_in) }}</p>
+        <p>{{ prettyDate(punch.punch_out) }}</p>
+        <p>{{ ((new Date(punch.punch_out) - new Date(punch.punch_in))/1000/60) }}</p>
       </div>
     </div>
     <div v-else>
@@ -41,7 +46,7 @@
        let fp = [];
        for (let i=0; i < this.punches.length; i++) {
          let punch = this.punches[i];
-         let outPunch = new Date(punch.OUT);
+         let outPunch = new Date(punch.punch_out);
          let now = new Date();
          let millis = now - outPunch;
          let timePassed = Math.floor(millis/60000);
@@ -64,13 +69,14 @@
          else
            return [];
        }
+       console.log("Filtered punches: ", fp);
        return fp;
      },
      timeIn: function() {
        let timeIn = 0;
        for (let i = 0; i < this.filteredPunches.length; i++) {
          let punch = this.filteredPunches[i];
-         timeIn += (new Date(punch.OUT) - new Date(punch.IN));
+         timeIn += (new Date(punch.punch_out) - new Date(punch.punch_in));
        }
        // Convert to minutes
        timeIn /= 1000;
@@ -85,7 +91,17 @@
    },
    methods: {
      setWindow: function(setting) {
+       console.log("Setting window...");
        this.window = setting;
+     },
+     prettyDate: function(d) {
+       let date = new Date(d);
+       let s = (date.getMonth() + 1) + "/" + date.getDate();
+       let min = date.getMinutes();
+       if (min < 10)
+         min = "0" + min;
+       s += "  " + date.getHours() + ":" + min;
+       return s;
      },
    },
  }
